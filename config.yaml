@@ -1,0 +1,44 @@
+# Telco Pipeline Configuration
+
+paths:
+  raw_data: "data/raw/telco_customer_churn.csv"
+  processed_dir: "data/processed"
+  models_dir: "models"
+  
+data_cleaning:
+  target_column: "Churn"
+  id_column: "customerID"
+  target_mapping:
+    No: 0
+    Yes: 1
+
+features:
+  numerical_cols:
+    - "tenure"
+    - "MonthlyCharges"
+    - "TotalCharges"
+  categorical_cols:
+    - "gender"
+    - "SeniorCitizen"
+    - "Partner"
+    - "Dependents"
+    - "PhoneService"
+    - "MultipleLines"
+    - "InternetService"
+    - "OnlineSecurity"
+    - "OnlineBackup"
+    - "DeviceProtection"
+    - "TechSupport"
+    - "StreamingTV"
+    - "StreamingMovies"
+    - "Contract"
+    - "PaperlessBilling"
+    - "PaymentMethod"
+
+model_params:
+  class_weight: "balanced"
+  C: 0.1
+  solver: "saga"
+  max_iter: 2000
+  random_state: 42
+  cv_folds: 5
