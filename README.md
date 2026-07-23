@@ -6,6 +6,7 @@ An end-to-end machine learning system built with scikit-learn to predict custome
 
 ## Architecture and Production Stack
 
+```text
 Telco/
 ├── models/                  # Serialized model artifacts & preprocessors
 │   └── logistic_regression_model.pkl
