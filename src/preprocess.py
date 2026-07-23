@@ -7,7 +7,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, TargetEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.base import BaseEstimator, TransformerMixin
-from src.config_loader import load_config
+try:
+    from src.config_loader import load_config
+except ModuleNotFoundError:
+    from config_loader import load_config
 
 config = load_config()
 raw_data_path = config["abs_paths"]["raw_data"]
@@ -73,27 +76,39 @@ print("Preprocessing complete. Artifacts 'frozen' and saved successfully.")
 #Custom transformer for engineering Charges_per_tenure, 
 #High_cost_month_to_month and Total_services new features
 class TelcoFeatureEngineer(BaseEstimator, TransformerMixin):
+    def __init__(self, service_cols=None):
+        self.service_cols = service_cols
     def fit(self, X, y=None):
         return self
     
     def transform(self, X):
         X_out = X.copy()
         
-        #To avoid division by zero for new customers with 0 tenure, replace with 1
-        tenure_safe = X_out['tenure'].replace(0, 1)
-        X_out['Charges_per_Tenure'] = X_out['MonthlyCharges'] / tenure_safe
-        
-        #Select highly volatile month-to-month contracts with high charges
-        X_out['High_Cost_Month_to_Month'] = ((X_out['Contract'] == 'Month-to-month') & 
-                                             (X_out['MonthlyCharges'] > 70)).astype(int)
-        
-        #Count total internet services activated for each user by row
-        service_cols = ['OnlineSecurity', 'OnlineBackup', 'DeviceProtection', 
-                        'TechSupport', 'StreamingTV', 'StreamingMovies']
-        X_out['Total_Services'] = X_out[service_cols].apply(
-            lambda row: sum(row == 'Yes'), axis=1
-        )
-        
+        # Total_Services count (Safely handle missing columns during testing or API calls)
+        if self.service_cols:
+            # Filter to keep only columns that exist in X_out
+            existing_services = [col for col in self.service_cols if col in X_out.columns]
+            if existing_services:
+                X_out["Total_Services"] = (X_out[existing_services] != "No").sum(axis=1)
+            else:
+                X_out["Total_Services"] = 0
+        else:
+            X_out["Total_Services"] = 0
+
+        #Charges_per_Tenure (with zero-division protection)
+        tenure_safe = np.where(X_out["tenure"] == 0, 1, X_out["tenure"])
+        X_out["Charges_per_Tenure"] = X_out["TotalCharges"] / tenure_safe
+
+        # High_Cost_Month_to_Month binary indicator
+        if "Contract" in X_out.columns and "MonthlyCharges" in X_out.columns:
+            median_monthly = X_out["MonthlyCharges"].median()
+            X_out["High_Cost_Month_to_Month"] = (
+                (X_out["Contract"] == "Month-to-month") & 
+                (X_out["MonthlyCharges"] > median_monthly)
+            ).astype(int)
+        else:
+            X_out["High_Cost_Month_to_Month"] = 0
+
         return X_out
 
 #Load raw dataset

@@ -15,7 +15,7 @@ Our models were tracked and evaluated using the Receiver Operating Characteristi
 
 |**Baseline Logistic Regression**| `main` | Fast, interpretable linear classification baseline | **0.8371** | Near Target |
 
-|**Experimental Logistic Regression**|`feature-engineering-v2`| Regularized linear model with engineered features | **0.8305** | Stable / Robust |
+|**Experimental Logistic Regression**|`feature-engineering-v2`| Regularized linear model with engineered features | **0.7733** | Stable / Robust |
 
 |**Decision Tree Classifier**| `main` | Non-linear tree structure baseline | **0.8276** | Baseline |
 

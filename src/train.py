@@ -56,9 +56,9 @@ model_log = LogisticRegression(class_weight='balanced', C=0.1, solver='saga', ma
 cv_scores = cross_val_score(model_log, X_train, y_train, cv=5, scoring='roc_auc')
 print(f"Mean v2 Cross-Validated ROC-AUC: {np.mean(cv_scores):.4f}")
 
-#Fit and optimize threshold
-model.fit(X_train, y_train)
-test_probs = model.predict_proba(X_test)[:, 1]
+#Fit model_log and optimize threshold
+model_log.fit(X_train, y_train)
+test_probs = model_log.predict_proba(X_test)[:, 1]
 
 # Calculate true final ROC-AUC on unseen data
 fpr, tpr, thresholds = roc_curve(y_test, test_probs)
