@@ -91,6 +91,7 @@ $body = @{
 Invoke-RestMethod -Uri "http://localhost:8000/predict" -Method Post -Body $body -ContentType "application/json"
 ```
 ## Sample Response:
+```text
 {
   "status": "success",
   "data": {
@@ -99,6 +100,7 @@ Invoke-RestMethod -Uri "http://localhost:8000/predict" -Method Post -Body $body 
     "churn_probability": 0.7083
   }
 }
+```
 
 ## Repository Architecture & Workspace
 
