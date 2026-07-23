@@ -23,7 +23,7 @@ Telco/
 ├── Dockerfile               # Containerization blueprint (Python 3.11-slim)
 ├── requirements.txt         # Production-only environment dependencies
 └── README.md
-
+```
 * **API Engine:** FastAPI + Uvicorn
 * **Testing Suite:** Pytest
 * **Model Runtime:** Python 3.11-slim container environment
@@ -65,6 +65,7 @@ docker run -d -p 8000:8000 --name telco-api telco-churn-api:v1
 
 ## API Inference Quickstart (PowerShell)
 Send a customer JSON payload to receive real-time prediction probalities:
+```text
 $body = @{
     gender = "Female"
     SeniorCitizen = 0
@@ -88,7 +89,7 @@ $body = @{
 } | ConvertTo-Json
 
 Invoke-RestMethod -Uri "http://localhost:8000/predict" -Method Post -Body $body -ContentType "application/json"
-
+```
 ## Sample Response:
 {
   "status": "success",
